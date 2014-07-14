@@ -102,14 +102,14 @@ Poweroff is simulated with a reboot into rescue-pro mode."
 
 	run_delay(options)
 
-	conn = soap_login(options)
 
 	if options["--action"] == 'monitor':
 		try:
+			conn = soap_login(options)
 			conn.service.logout(options["session"])
+			sys.exit(0)
 		except Exception:
-			pass
-		sys.exit(0)
+			sys.exit(1)
 
 	# Save datetime just before changing netboot
 	before_netboot_reboot = datetime.now()
