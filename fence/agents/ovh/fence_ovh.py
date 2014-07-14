@@ -35,7 +35,8 @@ def define_new_opts():
 		"default" : "",
 		"order" : 1}
 
-def netboot_reboot(conn, options, mode):
+def netboot_reboot(options, mode):
+	conn = soap_login(options)
 	# dedicatedNetbootModifyById changes the mode of the next reboot
 	conn.service.dedicatedNetbootModifyById(options["session"], options["--plug"], mode, '', options["--email"])
 
@@ -45,12 +46,14 @@ def netboot_reboot(conn, options, mode):
 
 	conn.service.logout(options["session"])
 
-def reboot_time(conn, options):
+def reboot_time(options):
+	conn = soap_login(options)
 	result = conn.service.dedicatedHardRebootStatus(options["session"], options["--plug"])
 	tmpstart = datetime.strptime(result.start, '%Y-%m-%d %H:%M:%S')
 	tmpend = datetime.strptime(result.end, '%Y-%m-%d %H:%M:%S')
 	result.start = tmpstart
 	result.end = tmpend
+	conn.service.logout(options["session"])
 
 	return result
 
@@ -116,18 +119,18 @@ Poweroff is simulated with a reboot into rescue-pro mode."
 
 	if options["--action"] == 'off':
 		# Reboot in Rescue-pro
-		netboot_reboot(conn, options, OVH_RESCUE_PRO_NETBOOT_ID)
+		netboot_reboot(options, OVH_RESCUE_PRO_NETBOOT_ID)
 		time.sleep(STATUS_RESCUE_PRO_SLEEP)
 	elif options["--action"] in  ['on', 'reboot']:
 		# Reboot from HD
-		netboot_reboot(conn, options, OVH_HARD_DISK_NETBOOT_ID)
+		netboot_reboot(options, OVH_HARD_DISK_NETBOOT_ID)
 		time.sleep(STATUS_HARD_DISK_SLEEP)
 
 	# Save datetime just after reboot
 	after_netboot_reboot = datetime.now()
 
 	# Verify that action was completed sucesfully
-	reboot_t = reboot_time(conn, options)
+	reboot_t = reboot_time(options)
 
 	logging.debug("reboot_start_end.start: %s\n",
 		reboot_t.start.strftime('%Y-%m-%d %H:%M:%S'))
@@ -144,11 +147,6 @@ Poweroff is simulated with a reboot into rescue-pro mode."
 	else:
 		result = 1
 		logging.debug("ERROR: Netboot reboot wasn't OK.\n")
-
-	try:
-		conn.service.logout(options["session"])
-	except Exception:
-		pass
 
 	sys.exit(result)
 
