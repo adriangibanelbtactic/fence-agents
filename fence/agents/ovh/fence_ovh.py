@@ -42,21 +42,37 @@ def netboot_reboot(options, mode):
 	  conn.service.dedicatedNetbootModifyById(options["session"], options["--plug"], mode, '', options["--email"])
 	except Exception, ex:
 	  logging.error("Exception during dedicatedNetbootModifyById call:\n%s\n", str(ex))
+	  sys.exit(1)
 
 	# dedicatedHardRebootDo initiates a hard reboot on the given node
-	conn.service.dedicatedHardRebootDo(options["session"],
+	try:
+	  conn.service.dedicatedHardRebootDo(options["session"],
 			options["--plug"], 'Fencing initiated by cluster', '', 'en')
-
-	conn.service.logout(options["session"])
+	except Exception, ex:
+	  logging.error("Exception during dedicatedHardRebootDo call:\n%s\n", str(ex))
+	  sys.exit(1)
+	try:
+	  conn.service.logout(options["session"])
+	except Exception, ex:
+	  logging.warning("Ignoring exception during logout call:\n%s\n", str(ex))
+	  pass
 
 def reboot_time(options):
 	conn = soap_login(options)
-	result = conn.service.dedicatedHardRebootStatus(options["session"], options["--plug"])
+	try:
+	  result = conn.service.dedicatedHardRebootStatus(options["session"], options["--plug"])
+	except Exception, ex:
+	  logging.error("Exception during dedicatedHardRebootStatus call:\n%s\n", str(ex))
+	  sys.exit(1)
 	tmpstart = datetime.strptime(result.start, '%Y-%m-%d %H:%M:%S')
 	tmpend = datetime.strptime(result.end, '%Y-%m-%d %H:%M:%S')
 	result.start = tmpstart
 	result.end = tmpend
-	conn.service.logout(options["session"])
+	try:
+	  conn.service.logout(options["session"])
+	except Exception, ex:
+	  logging.warning("Ignoring exception during logout call:\n%s\n", str(ex))
+	  pass
 
 	return result
 
