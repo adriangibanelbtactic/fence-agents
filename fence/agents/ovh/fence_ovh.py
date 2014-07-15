@@ -38,7 +38,10 @@ def define_new_opts():
 def netboot_reboot(options, mode):
 	conn = soap_login(options)
 	# dedicatedNetbootModifyById changes the mode of the next reboot
-	conn.service.dedicatedNetbootModifyById(options["session"], options["--plug"], mode, '', options["--email"])
+	try:
+	  conn.service.dedicatedNetbootModifyById(options["session"], options["--plug"], mode, '', options["--email"])
+	except Exception, ex:
+	  logging.error("Exception during dedicatedNetbootModifyById call:\n%s\n", str(ex))
 
 	# dedicatedHardRebootDo initiates a hard reboot on the given node
 	conn.service.dedicatedHardRebootDo(options["session"],
