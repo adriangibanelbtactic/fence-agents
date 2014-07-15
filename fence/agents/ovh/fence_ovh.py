@@ -22,8 +22,8 @@ from fencing import fail, fail_usage, EC_LOGIN_DENIED, run_delay
 OVH_RESCUE_PRO_NETBOOT_ID = '28'
 OVH_HARD_DISK_NETBOOT_ID = '1'
 
-STATUS_HARD_DISK_SLEEP = 240 # Wait 4 minutes to SO to boot
-STATUS_RESCUE_PRO_SLEEP = 150 # Wait 2 minutes 30 seconds to Rescue-Pro to run
+STATUS_HARD_DISK_SLEEP = 360 # Wait 6 minutes for SO to boot
+STATUS_RESCUE_PRO_SLEEP = 360 # Wait 6 minutes for Rescue-Pro to run
 
 def define_new_opts():
 	all_opt["email"] = {
