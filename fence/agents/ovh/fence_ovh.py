@@ -33,8 +33,8 @@ def modify_default_opts():
 	all_opt["passwd"]["help"] = "-p, --password=[AS]      OVH Secret Application Key"
 	all_opt["passwd"]["shortdesc"] = "OVH Secret Application Key (AS)"
 
-	all_opt["port"]["help"] = "-n, --plug=[id]                OVH Internal name of your dedicated server"
-	all_opt["port"]["shortdesc"] = "OVH Internal name of your dedicated server"
+	all_opt["port"]["help"] = "-n, --plug=[id]                Internal name of your OVH dedicated server"
+	all_opt["port"]["shortdesc"] = "Internal name of your OVH dedicated server"
 
 def define_new_opts():
 	all_opt["email"] = {
