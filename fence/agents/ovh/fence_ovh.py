@@ -26,6 +26,16 @@ OVH_HARD_DISK_NETBOOT_ID = '1'
 STATUS_HARD_DISK_SLEEP = 360 # Wait 6 minutes for SO to boot
 STATUS_RESCUE_PRO_SLEEP = 360 # Wait 6 minutes for Rescue-Pro to run
 
+def modify_default_opts():
+	all_opt["login"]["help"] = "-l, --username=[AK]         OVH Application Key"
+	all_opt["login"]["shortdesc"] = "OVH Application Key (AK)"
+
+	all_opt["passwd"]["help"] = "-p, --password=[AS]      OVH Secret Application Key"
+	all_opt["passwd"]["shortdesc"] = "OVH Secret Application Key (AS)"
+
+	all_opt["port"]["help"] = "-n, --plug=[id]                OVH Internal name of your dedicated server"
+	all_opt["port"]["shortdesc"] = "OVH Internal name of your dedicated server"
+
 def define_new_opts():
 	all_opt["email"] = {
 		"getopt" : "Z:",
@@ -104,8 +114,8 @@ def main():
 
 	atexit.register(atexit_handler)
 
+	modify_default_opts()
 	define_new_opts()
-	all_opt["action"]["help"] = "-o, --action=[action]          Action: reboot (default), off or on"
 	options = check_input(device_opt, process_input(device_opt))
 
 	docs = {}
