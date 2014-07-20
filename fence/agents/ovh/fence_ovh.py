@@ -46,6 +46,15 @@ def define_new_opts():
 		"default" : "",
 		"order" : 1}
 
+	all_opt["ovhcustomerkey"] = {
+		"getopt" : "C:",
+		"longopt" : "ovhcustomerkey",
+		"help" : "-C, --ovhcustomerkey=<ovhcustomerkey>         OVH Customer Key",
+		"required" : "1",
+		"shortdesc" : "OVH Customer Key (CK)",
+		"default" : "",
+		"order" : 1}
+
 def netboot_reboot(options, mode):
 	conn = soap_login(options)
 	# dedicatedNetbootModifyById changes the mode of the next reboot
@@ -110,7 +119,7 @@ def remove_tmp_dir(tmp_dir):
 	shutil.rmtree(tmp_dir)
 
 def main():
-	device_opt = ["login", "passwd", "port", "email", "no_status"]
+	device_opt = ["login", "passwd", "port", "email", "ovhcustomerkey" "no_status"]
 
 	atexit.register(atexit_handler)
 
