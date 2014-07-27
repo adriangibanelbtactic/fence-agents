@@ -39,7 +39,7 @@ import json
 OVH_API_EU = "https://api.ovh.com/1.0"          # Root URL of OVH european API
 OVH_API_CA = "https://ca.api.ovh.com/1.0"       # Root URL of OVH canadian API
 
-class Api:
+class OvhApi:
     """
     Simple wrapper class for OVH REST API.
     """
