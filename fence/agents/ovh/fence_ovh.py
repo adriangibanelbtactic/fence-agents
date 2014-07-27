@@ -55,6 +55,15 @@ def define_new_opts():
 		"default" : "",
 		"order" : 1}
 
+	all_opt["ovhapilocation"] = {
+		"getopt" : "H:",
+		"longopt" : "ovhapilocation",
+		"help" : "-H, --ovhapilocation=EU|CA         OVH API location",
+		"required" : "0",
+		"shortdesc" : "OVH Api location",
+		"default" : "EU",
+		"order" : 1}
+
 def netboot_reboot(options, mode):
 	conn = soap_login(options)
 	# dedicatedNetbootModifyById changes the mode of the next reboot
@@ -118,8 +127,16 @@ def soap_login(options):
 def remove_tmp_dir(tmp_dir):
 	shutil.rmtree(tmp_dir)
 
+def init_ovh_api_location():
+	if options["--ovhapilocation"] == "CA":
+		OVH_API_ROOT = OvhApi.OVH_API_CA
+	elif options["--ovhapilocation"] == "EU":
+		OVH_API_ROOT = OvhApi.OVH_API_EU
+	else:
+		OVH_API_ROOT = OvhApi.OVH_API_EU
+
 def main():
-	device_opt = ["login", "passwd", "port", "email", "ovhcustomerkey", "no_status"]
+	device_opt = ["login", "passwd", "port", "email", "ovhcustomerkey", "ovhapilocation" "no_status"]
 
 	atexit.register(atexit_handler)
 
@@ -144,6 +161,7 @@ Poweroff is simulated with a reboot into rescue-pro mode."
 
 	run_delay(options)
 
+	init_ovh_api_location()
 
 	if options["--action"] == 'monitor':
 		try:
