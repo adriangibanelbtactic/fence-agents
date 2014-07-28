@@ -81,6 +81,8 @@ def netboot_reboot(options, mode):
 	except Exception, ex:
 	  logging.error("Exception while asking server to reboot:\n%s\n", str(ex))
 	  sys.exit(1)
+	reboot_response_json=json.loads(reboot_response)
+	reboot_task_id=reboot_response_json[taskId]
 
 def reboot_time(options):
 	try:
