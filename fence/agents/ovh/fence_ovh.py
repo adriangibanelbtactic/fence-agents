@@ -69,7 +69,6 @@ def define_new_opts():
 		"order" : 1}
 
 def netboot_reboot(options, mode):
-	conn = soap_login(options)
 	# dedicatedNetbootModifyById changes the mode of the next reboot
 	try:
 	  conn.service.dedicatedNetbootModifyById(options["session"], options["--plug"], mode, '', options["--email"])
@@ -84,14 +83,8 @@ def netboot_reboot(options, mode):
 	except Exception, ex:
 	  logging.error("Exception during dedicatedHardRebootDo call:\n%s\n", str(ex))
 	  sys.exit(1)
-	try:
-	  conn.service.logout(options["session"])
-	except Exception, ex:
-	  logging.warning("Ignoring exception during logout call:\n%s\n", str(ex))
-	  pass
 
 def reboot_time(options):
-	conn = soap_login(options)
 	try:
 	  result = conn.service.dedicatedHardRebootStatus(options["session"], options["--plug"])
 	except Exception, ex:
@@ -101,32 +94,8 @@ def reboot_time(options):
 	tmpend = datetime.strptime(result.end, '%Y-%m-%d %H:%M:%S')
 	result.start = tmpstart
 	result.end = tmpend
-	try:
-	  conn.service.logout(options["session"])
-	except Exception, ex:
-	  logging.warning("Ignoring exception during logout call:\n%s\n", str(ex))
-	  pass
 
 	return result
-
-def soap_login(options):
-	imp = Import('http://schemas.xmlsoap.org/soap/encoding/')
-	url = 'https://www.ovh.com/soapi/soapi-re-1.59.wsdl'
-	imp.filter.add('http://soapi.ovh.com/manager')
-	d = ImportDoctor(imp)
-
-	tmp_dir = tempfile.mkdtemp()
-	tempfile.tempdir = tmp_dir
-	atexit.register(remove_tmp_dir, tmp_dir)
-
-	try:
-		soap = Client(url, doctor=d)
-		session = soap.service.login(options["--username"], options["--password"], 'en', 0)
-	except Exception:
-		fail(EC_LOGIN_DENIED)
-
-	options["session"] = session
-	return soap
 
 def remove_tmp_dir(tmp_dir):
 	shutil.rmtree(tmp_dir)
@@ -169,8 +138,7 @@ Poweroff is simulated with a reboot into rescue-pro mode."
 
 	if options["--action"] == 'monitor':
 		try:
-			conn = soap_login(options)
-			conn.service.logout(options["session"])
+			# TODO: Ask for tasks
 			sys.exit(0)
 		except Exception:
 			sys.exit(1)
