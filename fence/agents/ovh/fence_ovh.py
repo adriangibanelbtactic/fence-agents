@@ -14,8 +14,6 @@ import shutil, tempfile
 import logging
 import atexit
 from datetime import datetime
-from suds.client import Client
-from suds.xsd.doctor import ImportDoctor, Import
 sys.path.append("@FENCEAGENTSLIBDIR@")
 from fencing import *
 from fencing import fail, fail_usage, EC_LOGIN_DENIED, run_delay
