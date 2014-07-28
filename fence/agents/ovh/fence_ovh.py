@@ -136,6 +136,7 @@ Poweroff is simulated with a reboot into rescue-pro mode."
 
 	init_ovh_api_location()
 
+	conn = new OvhApi(OVH_API_ROOT, options["--username"], options["--password"], options["--ovhcustomerkey"])
 	if options["--action"] == 'monitor':
 		try:
 			# TODO: Ask for tasks
