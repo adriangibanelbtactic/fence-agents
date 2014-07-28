@@ -95,7 +95,7 @@ def reboot_time(options):
 def remove_tmp_dir(tmp_dir):
 	shutil.rmtree(tmp_dir)
 
-def init_ovh_api_location():
+def init_ovh_api_location(options):
 	if options["--ovhapilocation"] == "CA":
 		OVH_API_ROOT = OvhApi.OVH_API_CA
 	elif options["--ovhapilocation"] == "EU":
@@ -129,7 +129,7 @@ Poweroff is simulated with a reboot into rescue-pro mode."
 
 	run_delay(options)
 
-	init_ovh_api_location()
+	init_ovh_api_location(options)
 
 	conn = OvhApi(OVH_API_ROOT, options["--username"], options["--password"], options["--ovhcustomerkey"])
 	if options["--action"] == 'monitor':
