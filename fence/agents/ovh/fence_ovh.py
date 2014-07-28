@@ -23,8 +23,8 @@ from fencing import fail, fail_usage, EC_LOGIN_DENIED, run_delay
 OVH_RESCUE_PRO_NETBOOT_ID = '28'
 OVH_HARD_DISK_NETBOOT_ID = '1'
 
-STATUS_HARD_DISK_SLEEP = 360 # Wait 6 minutes for SO to boot
-STATUS_RESCUE_PRO_SLEEP = 360 # Wait 6 minutes for Rescue-Pro to run
+STATUS_HARD_DISK_SLEEP = 240 # Wait 4 minutes for SO to boot
+STATUS_RESCUE_PRO_SLEEP = 150 # Wait 2 minutes and 30 seconds for Rescue-Pro to run
 
 def modify_default_opts():
 	all_opt["login"]["help"] = "-l, --username=[AK]         OVH Application Key"
@@ -35,6 +35,9 @@ def modify_default_opts():
 
 	all_opt["port"]["help"] = "-n, --plug=[id]                Internal name of your OVH dedicated server"
 	all_opt["port"]["shortdesc"] = "Internal name of your OVH dedicated server"
+
+	all_opt["power_wait"]["default"] = STATUS_RESCUE_PRO_SLEEP
+	all_opt["power_wait"]["shortdesc"] = "Time to wait till OVH Rescue starts"
 
 def define_new_opts():
 	all_opt["email"] = {
@@ -136,7 +139,7 @@ def init_ovh_api_location():
 		OVH_API_ROOT = OvhApi.OVH_API_EU
 
 def main():
-	device_opt = ["login", "passwd", "port", "email", "ovhcustomerkey", "ovhapilocation" "no_status"]
+	device_opt = ["login", "passwd", "port", "email", "ovhcustomerkey", "ovhapilocation", "power_wait", "no_status"]
 
 	atexit.register(atexit_handler)
 
@@ -177,7 +180,7 @@ Poweroff is simulated with a reboot into rescue-pro mode."
 	if options["--action"] == 'off':
 		# Reboot in Rescue-pro
 		netboot_reboot(options, OVH_RESCUE_PRO_NETBOOT_ID)
-		time.sleep(STATUS_RESCUE_PRO_SLEEP)
+		time.sleep(int(options["--power-wait"]))
 	elif options["--action"] in  ['on', 'reboot']:
 		# Reboot from HD
 		netboot_reboot(options, OVH_HARD_DISK_NETBOOT_ID)
