@@ -40,14 +40,6 @@ def modify_default_opts():
 	all_opt["power_wait"]["shortdesc"] = "Time to wait till OVH Rescue starts"
 
 def define_new_opts():
-	all_opt["email"] = {
-		"getopt" : "Z:",
-		"longopt" : "email",
-		"help" : "-Z, --email=<email>          email for reboot message: admin@domain.com",
-		"required" : "1",
-		"shortdesc" : "Reboot email",
-		"default" : "",
-		"order" : 1}
 
 	all_opt["ovhcustomerkey"] = {
 		"getopt" : "C:",
@@ -112,7 +104,7 @@ def init_ovh_api_location():
 		OVH_API_ROOT = OvhApi.OVH_API_EU
 
 def main():
-	device_opt = ["login", "passwd", "port", "email", "ovhcustomerkey", "ovhapilocation", "power_wait", "no_status"]
+	device_opt = ["login", "passwd", "port", "ovhcustomerkey", "ovhapilocation", "power_wait", "no_status"]
 
 	atexit.register(atexit_handler)
 
