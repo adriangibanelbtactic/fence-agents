@@ -19,6 +19,7 @@ from suds.xsd.doctor import ImportDoctor, Import
 sys.path.append("@FENCEAGENTSLIBDIR@")
 from fencing import *
 from fencing import fail, fail_usage, EC_LOGIN_DENIED, run_delay
+import OvhApi
 
 OVH_RESCUE_PRO_NETBOOT_ID = '28'
 OVH_HARD_DISK_NETBOOT_ID = '1'
