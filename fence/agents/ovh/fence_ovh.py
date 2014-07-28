@@ -69,9 +69,9 @@ def define_new_opts():
 def netboot_reboot(options, mode):
 	# dedicatedNetbootModifyById changes the mode of the next reboot
 	try:
-	  conn.service.dedicatedNetbootModifyById(options["session"], options["--plug"], mode, '', options["--email"])
+	  conn.put("/dedicated/server/"+options["--plug"],"{\"serviceName\": \""+options["--plug"]+"\",\"Dedicated\": [{\"bootId\": \""+mode+"\",\"monitoring\":\"true\",\"rootDevice\":\"\",\"state\":\"ok\"}]}")
 	except Exception, ex:
-	  logging.error("Exception during dedicatedNetbootModifyById call:\n%s\n", str(ex))
+	  logging.error("Exception during server boot properties were changed:\n%s\n", str(ex))
 	  sys.exit(1)
 
 	# dedicatedHardRebootDo initiates a hard reboot on the given node
