@@ -124,9 +124,6 @@ Poweroff is simulated with a reboot into rescue-pro mode."
 	if options["--action"] == "list":
 		fail_usage("Action 'list' is not supported in this fence agent")
 
-	if not options.has_key("--email"):
-		fail_usage("You have to enter e-mail address which is notified by fence agent")
-
 	run_delay(options)
 
 	init_ovh_api_location()
