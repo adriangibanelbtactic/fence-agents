@@ -86,12 +86,15 @@ def netboot_reboot(options, mode):
 
 def reboot_time(options):
 	try:
-	  result = conn.service.dedicatedHardRebootStatus(options["session"], options["--plug"])
+	  task_response=conn.get("/dedicated/server/"+options["--plug"]+"/task/"+reboot_task_id,"{\"serviceName\": \""+options["--plug"]+"\",\"taskId\": \""+reboot_task_id+"\"}")
 	except Exception, ex:
-	  logging.error("Exception during dedicatedHardRebootStatus call:\n%s\n", str(ex))
+	  logging.error("Exception while checking task response:\n%s\n", str(ex))
 	  sys.exit(1)
-	tmpstart = datetime.strptime(result.start, '%Y-%m-%d %H:%M:%S')
-	tmpend = datetime.strptime(result.end, '%Y-%m-%d %H:%M:%S')
+	task_response_json=json.loads(task_response)
+	tmpstart = task_response_json[startDate]
+	tmpend = task_response_json[doneDate]
+	#tmpstart = datetime.strptime(result.start, '%Y-%m-%d %H:%M:%S')
+	#tmpend = datetime.strptime(result.end, '%Y-%m-%d %H:%M:%S')
 	result.start = tmpstart
 	result.end = tmpend
 
