@@ -150,14 +150,18 @@ Poweroff is simulated with a reboot into rescue-pro mode."
 	if options["--action"] == 'off':
 		# Reboot in Rescue-pro
 		netboot_reboot(options, OVH_RESCUE_PRO_NETBOOT_ID)
+		# Save datetime just after reboot
+		time.sleep(10) # Give 10 seconds for the task to start
+		after_netboot_reboot = datetime.now()
 		time.sleep(int(options["--power-wait"]))
 	elif options["--action"] in  ['on', 'reboot']:
 		# Reboot from HD
 		netboot_reboot(options, OVH_HARD_DISK_NETBOOT_ID)
+		# Save datetime just after reboot
+		time.sleep(10) # Give 10 seconds for the task to start
+		after_netboot_reboot = datetime.now()
 		time.sleep(STATUS_HARD_DISK_SLEEP)
 
-	# Save datetime just after reboot
-	after_netboot_reboot = datetime.now()
 
 	# Verify that action was completed sucesfully
 	reboot_t = reboot_time(options)
