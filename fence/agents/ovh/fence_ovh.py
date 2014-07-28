@@ -76,10 +76,9 @@ def netboot_reboot(options, mode):
 
 	# dedicatedHardRebootDo initiates a hard reboot on the given node
 	try:
-	  conn.service.dedicatedHardRebootDo(options["session"],
-			options["--plug"], 'Fencing initiated by cluster', '', 'en')
+	  reboot_response=conn.post("/dedicated/server/"+options["--plug"]+"/reboot","{\"serviceName\": \""+options["--plug"]+"\"}")
 	except Exception, ex:
-	  logging.error("Exception during dedicatedHardRebootDo call:\n%s\n", str(ex))
+	  logging.error("Exception while asking server to reboot:\n%s\n", str(ex))
 	  sys.exit(1)
 
 def reboot_time(options):
