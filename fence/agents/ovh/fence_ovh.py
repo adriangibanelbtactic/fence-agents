@@ -17,7 +17,7 @@ from datetime import datetime
 sys.path.append("@FENCEAGENTSLIBDIR@")
 from fencing import *
 from fencing import fail, fail_usage, EC_LOGIN_DENIED, run_delay
-import OvhApi
+from OvhApi import *
 import json
 
 OVH_RESCUE_PRO_NETBOOT_ID = '28'
