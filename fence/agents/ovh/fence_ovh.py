@@ -97,11 +97,11 @@ def remove_tmp_dir(tmp_dir):
 
 def init_ovh_api_location(options):
 	if options["--ovhapilocation"] == "CA":
-		ovh_api_root = OvhApi.OVH_API_CA
+		ovh_api_root = OVH_API_CA
 	elif options["--ovhapilocation"] == "EU":
-		ovh_api_root = OvhApi.OVH_API_EU
+		ovh_api_root = OVH_API_EU
 	else:
-		ovh_api_root = OvhApi.OVH_API_EU
+		ovh_api_root = OVH_API_EU
 
 	return ovh_api_root
 
