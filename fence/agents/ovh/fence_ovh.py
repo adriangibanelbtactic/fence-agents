@@ -73,7 +73,8 @@ def netboot_reboot(options, mode, conn):
 	except Exception, ex:
 	  logging.error("Exception while asking server to reboot:\n%s\n", str(ex))
 	  sys.exit(1)
-	reboot_response_json=json.loads(reboot_response)
+	reboot_response_parsed=json.dumps(reboot_response)
+	reboot_response_json=json.loads(reboot_response_parsed)
 	reboot_task_id=reboot_response_json[taskId]
 
 def reboot_time(options, conn):
@@ -82,7 +83,8 @@ def reboot_time(options, conn):
 	except Exception, ex:
 	  logging.error("Exception while checking task response:\n%s\n", str(ex))
 	  sys.exit(1)
-	task_response_json=json.loads(task_response)
+	task_response_parsed=json.dumps(task_response)
+	task_response_json=json.loads(task_response_parsed)
 	tmpstart = task_response_json[startDate]
 	tmpend = task_response_json[doneDate]
 	#tmpstart = datetime.strptime(result.start, '%Y-%m-%d %H:%M:%S')
