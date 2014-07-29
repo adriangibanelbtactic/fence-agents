@@ -59,7 +59,7 @@ def define_new_opts():
 		"default" : "EU",
 		"order" : 1}
 
-def netboot_reboot(options, mode):
+def netboot_reboot(options, mode, conn):
 	# dedicatedNetbootModifyById changes the mode of the next reboot
 	try:
 	  conn.put("/dedicated/server/"+options["--plug"],"{\"serviceName\": \""+options["--plug"]+"\",\"Dedicated\": [{\"bootId\": \""+mode+"\",\"monitoring\":\"true\",\"rootDevice\":\"\",\"state\":\"ok\"}]}")
@@ -76,7 +76,7 @@ def netboot_reboot(options, mode):
 	reboot_response_json=json.loads(reboot_response)
 	reboot_task_id=reboot_response_json[taskId]
 
-def reboot_time(options):
+def reboot_time(options, conn):
 	try:
 	  task_response=conn.get("/dedicated/server/"+options["--plug"]+"/task/"+reboot_task_id,"{\"serviceName\": \""+options["--plug"]+"\",\"taskId\": \""+reboot_task_id+"\"}")
 	except Exception, ex:
@@ -146,14 +146,14 @@ Poweroff is simulated with a reboot into rescue-pro mode."
 
 	if options["--action"] == 'off':
 		# Reboot in Rescue-pro
-		netboot_reboot(options, OVH_RESCUE_PRO_NETBOOT_ID)
+		netboot_reboot(options, OVH_RESCUE_PRO_NETBOOT_ID, conn)
 		# Save datetime just after reboot
 		time.sleep(10) # Give 10 seconds for the task to start
 		after_netboot_reboot = datetime.now()
 		time.sleep(int(options["--power-wait"]))
 	elif options["--action"] in  ['on', 'reboot']:
 		# Reboot from HD
-		netboot_reboot(options, OVH_HARD_DISK_NETBOOT_ID)
+		netboot_reboot(options, OVH_HARD_DISK_NETBOOT_ID, conn)
 		# Save datetime just after reboot
 		time.sleep(10) # Give 10 seconds for the task to start
 		after_netboot_reboot = datetime.now()
@@ -161,7 +161,7 @@ Poweroff is simulated with a reboot into rescue-pro mode."
 
 
 	# Verify that action was completed sucesfully
-	reboot_t = reboot_time(options)
+	reboot_t = reboot_time(options, conn)
 
 	logging.debug("reboot_start_end.start: %s\n",
 		reboot_t.start.strftime('%Y-%m-%d %H:%M:%S'))
