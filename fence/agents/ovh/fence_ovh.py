@@ -13,7 +13,6 @@ import pycurl, StringIO
 import shutil, tempfile
 import logging
 import atexit
-from datetime import datetime
 sys.path.append("@FENCEAGENTSLIBDIR@")
 from fencing import *
 from fencing import fail, fail_usage, EC_LOGIN_DENIED, run_delay
@@ -77,7 +76,9 @@ def netboot_reboot(options, mode, conn):
 	reboot_response_json=json.loads(reboot_response_parsed)
 	reboot_task_id=reboot_response_json[taskId]
 
-def reboot_time(options, conn):
+	return reboot_task_id
+
+def verify_reboot(options, reboot_task_id, conn):
 	try:
 	  task_response=conn.get("/dedicated/server/"+options["--plug"]+"/task/"+reboot_task_id,"{\"serviceName\": \""+options["--plug"]+"\",\"taskId\": \""+reboot_task_id+"\"}")
 	except Exception, ex:
@@ -85,14 +86,8 @@ def reboot_time(options, conn):
 	  sys.exit(1)
 	task_response_parsed=json.dumps(task_response)
 	task_response_json=json.loads(task_response_parsed)
-	tmpstart = task_response_json[startDate]
-	tmpend = task_response_json[doneDate]
-	#tmpstart = datetime.strptime(result.start, '%Y-%m-%d %H:%M:%S')
-	#tmpend = datetime.strptime(result.end, '%Y-%m-%d %H:%M:%S')
-	result.start = tmpstart
-	result.end = tmpend
-
-	return result
+	task_status = task_response_json['status']
+	return (task_status == "done")
 
 def remove_tmp_dir(tmp_dir):
 	shutil.rmtree(tmp_dir)
@@ -143,38 +138,17 @@ Poweroff is simulated with a reboot into rescue-pro mode."
 		except Exception:
 			sys.exit(1)
 
-	# Save datetime just before changing netboot
-	before_netboot_reboot = datetime.now()
-
 	if options["--action"] == 'off':
 		# Reboot in Rescue-pro
-		netboot_reboot(options, OVH_RESCUE_PRO_NETBOOT_ID, conn)
-		# Save datetime just after reboot
-		time.sleep(10) # Give 10 seconds for the task to start
-		after_netboot_reboot = datetime.now()
+		reboot_task_id = netboot_reboot(options, OVH_RESCUE_PRO_NETBOOT_ID, conn)
 		time.sleep(int(options["--power-wait"]))
 	elif options["--action"] in  ['on', 'reboot']:
 		# Reboot from HD
-		netboot_reboot(options, OVH_HARD_DISK_NETBOOT_ID, conn)
-		# Save datetime just after reboot
-		time.sleep(10) # Give 10 seconds for the task to start
-		after_netboot_reboot = datetime.now()
+		reboot_task_id = netboot_reboot(options, OVH_HARD_DISK_NETBOOT_ID, conn)
 		time.sleep(STATUS_HARD_DISK_SLEEP)
 
 
-	# Verify that action was completed sucesfully
-	reboot_t = reboot_time(options, conn)
-
-	logging.debug("reboot_start_end.start: %s\n",
-		reboot_t.start.strftime('%Y-%m-%d %H:%M:%S'))
-	logging.debug("before_netboot_reboot: %s\n",
-		before_netboot_reboot.strftime('%Y-%m-%d %H:%M:%S'))
-	logging.debug("reboot_start_end.end: %s\n",
-		reboot_t.end.strftime('%Y-%m-%d %H:%M:%S'))
-	logging.debug("after_netboot_reboot: %s\n",
-		after_netboot_reboot.strftime('%Y-%m-%d %H:%M:%S'))
-
-	if reboot_t.start < after_netboot_reboot < reboot_t.end:
+	if verify_reboot(options, reboot_task_id, conn):
 		result = 0
 		logging.debug("Netboot reboot went OK.\n")
 	else:
