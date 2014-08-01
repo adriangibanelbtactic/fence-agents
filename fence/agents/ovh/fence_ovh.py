@@ -19,8 +19,8 @@ from fencing import fail, fail_usage, EC_LOGIN_DENIED, run_delay
 from OvhApi import *
 import json
 
-OVH_RESCUE_PRO_NETBOOT_ID = 22
-OVH_HARD_DISK_NETBOOT_ID = 1
+OVH_RESCUE_PRO_NETBOOT_ID = 0
+OVH_HARD_DISK_NETBOOT_ID = 0
 
 STATUS_HARD_DISK_SLEEP = 240 # Wait 4 minutes for SO to boot
 STATUS_RESCUE_PRO_SLEEP = 240 # Wait 4 minutes for Rescue-Pro to run
@@ -102,6 +102,23 @@ def init_ovh_api_location(options):
 
 	return ovh_api_root
 
+def get_netbootid(options,netbootstr,conn):
+	try:
+	  netbootid_response=conn.get("/dedicated/server/"+options["--plug"]+"/boot"+"?"+"bootType"+"="+netbootstr)
+	except Exception, ex:
+	  logging.error("Exception while getting netbootid:\n%s\n", str(ex))
+	  sys.exit(1)
+	netbootid_response_parsed=json.dumps(netbootid_response)
+	netbootid_response_json=json.loads(netbootid_response_parsed)
+	netbootid_int = int(netbootid_response_json[0])
+	return netbootid_int
+
+def update_netbootids(options,conn):
+	global OVH_RESCUE_PRO_NETBOOT_ID
+	global OVH_HARD_DISK_NETBOOT_ID
+	OVH_RESCUE_PRO_NETBOOT_ID=get_netbootid(options,"rescue",conn)
+	OVH_HARD_DISK_NETBOOT_ID=get_netbootid(options,"harddisk",conn)
+
 def main():
 	device_opt = ["login", "passwd", "port", "ovhcustomerkey", "ovhapilocation", "power_wait", "no_status"]
 
@@ -138,6 +155,7 @@ Poweroff is simulated with a reboot into rescue-pro mode."
 		except Exception:
 			sys.exit(1)
 
+	update_netbootids(options,conn)
 	if options["--action"] == 'off':
 		# Reboot in Rescue-pro
 		reboot_task_id = netboot_reboot(options, OVH_RESCUE_PRO_NETBOOT_ID, conn)
