@@ -68,7 +68,7 @@ def netboot_reboot(options, mode, conn):
 
 	# dedicatedHardRebootDo initiates a hard reboot on the given node
 	try:
-	  reboot_response=conn.post("/dedicated/server/"+options["--plug"]+"/reboot","{\"serviceName\": \""+options["--plug"]+"\"}")
+	  reboot_response=conn.post("/dedicated/server/"+options["--plug"]+"/reboot",{})
 	except Exception, ex:
 	  logging.error("Exception while asking server to reboot:\n%s\n", str(ex))
 	  sys.exit(1)
