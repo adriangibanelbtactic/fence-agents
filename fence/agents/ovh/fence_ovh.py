@@ -20,7 +20,7 @@ from OvhApi import *
 import json
 
 OVH_RESCUE_PRO_NETBOOT_ID = 22
-OVH_HARD_DISK_NETBOOT_ID = '1'
+OVH_HARD_DISK_NETBOOT_ID = 1
 
 STATUS_HARD_DISK_SLEEP = 240 # Wait 4 minutes for SO to boot
 STATUS_RESCUE_PRO_SLEEP = 150 # Wait 2 minutes and 30 seconds for Rescue-Pro to run
@@ -35,7 +35,7 @@ def modify_default_opts():
 	all_opt["port"]["help"] = "-n, --plug=[id]                Internal name of your OVH dedicated server"
 	all_opt["port"]["shortdesc"] = "Internal name of your OVH dedicated server"
 
-	all_opt["power_wait"]["default"] = STATUS_RESCUE_PRO_SLEEP
+	all_opt["power_wait"]["default"] = str(STATUS_RESCUE_PRO_SLEEP)
 	all_opt["power_wait"]["shortdesc"] = "Time to wait till OVH Rescue starts"
 
 def define_new_opts():
