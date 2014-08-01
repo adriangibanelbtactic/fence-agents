@@ -20,7 +20,7 @@ from fencing import fail, fail_usage, EC_LOGIN_DENIED, run_delay
 from OvhApi import *
 import json
 
-OVH_RESCUE_PRO_NETBOOT_ID = '22'
+OVH_RESCUE_PRO_NETBOOT_ID = 22
 OVH_HARD_DISK_NETBOOT_ID = '1'
 
 STATUS_HARD_DISK_SLEEP = 240 # Wait 4 minutes for SO to boot
