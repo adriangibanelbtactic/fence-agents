@@ -80,7 +80,7 @@ def netboot_reboot(options, mode, conn):
 
 def verify_reboot(options, reboot_task_id, conn):
 	try:
-	  task_response=conn.get("/dedicated/server/"+options["--plug"]+"/task/"+reboot_task_id,"{\"serviceName\": \""+options["--plug"]+"\",\"taskId\": \""+reboot_task_id+"\"}")
+	  task_response=conn.get("/dedicated/server/"+options["--plug"]+"/task/"+str(reboot_task_id))
 	except Exception, ex:
 	  logging.error("Exception while checking task response:\n%s\n", str(ex))
 	  sys.exit(1)
