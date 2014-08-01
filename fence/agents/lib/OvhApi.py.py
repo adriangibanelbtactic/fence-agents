@@ -31,10 +31,12 @@ This module provides a simple python wrapper over the OVH REST API.
 It handles requesting credential, signing queries...
 """
 
+import sys
 import requests
 import hashlib
 import time
 import json
+import logging
 
 OVH_API_EU = "https://api.ovh.com/1.0"          # Root URL of OVH european API
 OVH_API_CA = "https://ca.api.ovh.com/1.0"       # Root URL of OVH canadian API
@@ -105,7 +107,17 @@ class OvhApi:
             queryHeaders = {"X-Ovh-Application": self.applicationKey, "X-Ovh-Timestamp": now, "Content-type": "application/json"}
         req = getattr(requests, method.lower())
         # For debug : print "%s %s" % (method.upper(), targetUrl)
-        result = req(targetUrl, headers=queryHeaders, data=body).text
+        # Code handling which it's only useful when fencing - BEGIN
+        response = req(targetUrl, headers=queryHeaders, data=body)
+        if (response.status_code != requests.codes.ok):
+                logging.error("Wrong error code received: %s\n %s\n [%s]:\n %s\n", str(method).upper(),
+                    response.url,
+                    response.status_code,
+                    str(response)
+                    )
+                sys.exit(1)
+        result = response.text
+        # Code handling which it's only useful when fencing - END
         return json.loads(result)
     
     def get (self, path):
