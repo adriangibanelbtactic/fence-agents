@@ -74,7 +74,7 @@ def netboot_reboot(options, mode, conn):
 	  sys.exit(1)
 	reboot_response_parsed=json.dumps(reboot_response)
 	reboot_response_json=json.loads(reboot_response_parsed)
-	reboot_task_id=reboot_response_json[taskId]
+	reboot_task_id=reboot_response_json['taskId']
 
 	return reboot_task_id
 
