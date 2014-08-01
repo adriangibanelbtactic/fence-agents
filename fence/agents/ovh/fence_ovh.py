@@ -23,7 +23,7 @@ OVH_RESCUE_PRO_NETBOOT_ID = 22
 OVH_HARD_DISK_NETBOOT_ID = 1
 
 STATUS_HARD_DISK_SLEEP = 240 # Wait 4 minutes for SO to boot
-STATUS_RESCUE_PRO_SLEEP = 150 # Wait 2 minutes and 30 seconds for Rescue-Pro to run
+STATUS_RESCUE_PRO_SLEEP = 240 # Wait 4 minutes for Rescue-Pro to run
 
 def modify_default_opts():
 	all_opt["login"]["help"] = "-l, --username=[AK]         OVH Application Key"
