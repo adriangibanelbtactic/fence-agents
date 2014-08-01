@@ -62,7 +62,7 @@ def define_new_opts():
 def netboot_reboot(options, mode, conn):
 	# dedicatedNetbootModifyById changes the mode of the next reboot
 	try:
-	  conn.put("/dedicated/server/"+options["--plug"],"{\"serviceName\": \""+options["--plug"]+"\",\"Dedicated\": [{\"bootId\": \""+mode+"\",\"monitoring\":\"true\",\"rootDevice\":\"\",\"state\":\"ok\"}]}")
+	  conn.put("/dedicated/server/"+options["--plug"],{'bootId': mode})
 	except Exception, ex:
 	  logging.error("Exception during server boot properties were changed:\n%s\n", str(ex))
 	  sys.exit(1)
