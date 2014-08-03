@@ -58,6 +58,15 @@ def define_new_opts():
 		"default" : "EU",
 		"order" : 1}
 
+	all_opt["bigserver"] = {
+		"getopt" : "I:",
+		"longopt" : "bigserver",
+		"help" : "-I, --bigserver=on|off         Workaround 5 minutes reboot timeout in big servers",
+		"required" : "0",
+		"shortdesc" : "Enable Big server mode",
+		"default" : "on",
+		"order" : 1}
+
 def netboot_reboot(options, mode, conn):
 	# dedicatedNetbootModifyById changes the mode of the next reboot
 	try:
@@ -87,7 +96,10 @@ def verify_reboot(options, reboot_task_id, conn):
 	task_response_parsed=json.dumps(task_response)
 	task_response_json=json.loads(task_response_parsed)
 	task_status = task_response_json['status']
-	return (task_status == "done")
+	if options["--bigserver"] == 'on':
+		return ((task_status == "done") or (task_status == "doing"))
+	else:
+		return (task_status == "done")
 
 def remove_tmp_dir(tmp_dir):
 	shutil.rmtree(tmp_dir)
@@ -120,7 +132,7 @@ def update_netbootids(options,conn):
 	OVH_HARD_DISK_NETBOOT_ID=get_netbootid(options,"harddisk",conn)
 
 def main():
-	device_opt = ["login", "passwd", "port", "ovhcustomerkey", "ovhapilocation", "power_wait", "no_status"]
+	device_opt = ["login", "passwd", "port", "ovhcustomerkey", "ovhapilocation", "power_wait", "bigserver", "no_status"]
 
 	atexit.register(atexit_handler)
 
@@ -159,11 +171,17 @@ Poweroff is simulated with a reboot into rescue-pro mode."
 	if options["--action"] == 'off':
 		# Reboot in Rescue-pro
 		reboot_task_id = netboot_reboot(options, OVH_RESCUE_PRO_NETBOOT_ID, conn)
-		time.sleep(int(options["--power-wait"]))
+		if options["--bigserver"] == 'on':
+			time.sleep(90)
+		else:
+			time.sleep(int(options["--power-wait"]))
 	elif options["--action"] in  ['on', 'reboot']:
 		# Reboot from HD
 		reboot_task_id = netboot_reboot(options, OVH_HARD_DISK_NETBOOT_ID, conn)
-		time.sleep(STATUS_HARD_DISK_SLEEP)
+		if options["--bigserver"] == 'on':
+			time.sleep(90)
+		else:
+			time.sleep(STATUS_HARD_DISK_SLEEP)
 
 
 	if verify_reboot(options, reboot_task_id, conn):
